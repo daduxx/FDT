@@ -64,14 +64,10 @@
     <script>
         // Funzione per ottenere l'indice dell'ordine delle taglie
         function getSizeOrderIndex(size) {
-            const sizeOrder = ['128', '140', '152', '6Y', '6 ANNI', '8Y', '8 ANNI', '10Y', '10 ANNI', '12Y', '12 ANNI', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', 'XXL (2XL)', 'XXXL', '3XL', 'XXXL (3XL)'];
+            const sizeOrder = ['128', '140', '152', '6Y', '6 ANNI', '8Y', '8 ANNI', '10Y', '10 ANNI', '12Y', '12 ANNI', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', 'XXL (2XL)', 'XXXL', '3XL', 'XXXL (3XL)', 'XXXXL', '4XL', 'XXXXL (4XL)'];
             return sizeOrder.indexOf(size);
         }
 
-        // Funzione per rimuovere le virgole consecutive
-        function clean(str) {
-            return str.replace(/,+/g, ("," || ",,," || ",,,,"));
-        }
 
         // Funzione per ordinare gli oggetti in base alla colonna specificata
         function sortByColumn(csvData, columnIndex) {
@@ -122,15 +118,12 @@
                 reader.onload = function(e) {
                     const csvData = e.target.result;
 
-                    // Rimuovi virgole consecutive
-                    const cleanedCSV = clean(csvData);
-
                     // Specifica il numero di colonna da ordinare
                     let numColInput = document.getElementById('numCol');
                     const columnIndex = parseInt(numColInput.value);
 
                     // Ordina gli oggetti per la colonna specificata
-                    const sortedCsv = sortByColumn(cleanedCSV, columnIndex);
+                    const sortedCsv = sortByColumn(csvData, columnIndex);
 
                     // Crea un oggetto Blob con i dati ordinati
                     const blob = new Blob([sortedCsv], { type: 'text/csv' });
