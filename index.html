@@ -39,7 +39,7 @@
         }
 
         input[type="text"] {
-            width: 200px;
+            width: 250px;
             margin-right: 10px;
             ;
         }
@@ -56,6 +56,7 @@
         <img src="https://fiorenzofdt.com/wp-content/themes/sublimatico1.4/images/fiorenzo-digital-teamwear.gif">
         <br><br><br>
         <input type="text" id="numCol" placeholder="Inserisci colonna"> 
+        <input type="text" id="sep" placeholder="Inserisci separatore (, / ;)">  <br><br>
         <button onclick="processCSV()">Ordina CSV</button>
         <button onclick='window.location.href = "./info.html"'>Info </button>
     </div>
@@ -84,10 +85,16 @@
             // Rimuovi l'header
             const header = rows.shift();
 
+            //trova il separatore
+            let sep = document.getElementById('sep').value;
+            if(sep == ""){
+                console.log("SEPARATORE STANDARD");
+            }
+            
             // Ordina gli oggetti in base alla colonna specificata
             rows.sort((a, b) => {
-                const columnsA = a.split(',');
-                const columnsB = b.split(',');
+                const columnsA = a.split(sep);
+                const columnsB = b.split(sep);
 
                 const sizeA = columnsA[columnIndex - 1] ? columnsA[columnIndex - 1].trim() : '';
                 const sizeB = columnsB[columnIndex - 1] ? columnsB[columnIndex - 1].trim() : '';
