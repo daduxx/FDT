@@ -14,7 +14,7 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            margin-top: 20px;
+            margin-top: 10px;
             font-size: 15px;
             overflow: hidden;
         }
@@ -31,20 +31,21 @@
         }
         
         img {
-            max-width: 200px;
+            max-width: 100%;
             height: auto;
         }
         
         .image-container {
             display: flex;
             justify-content: center;
-            margin-bottom: 80px;
-            width: 900px;
+            margin-top: -750px;
+            width: 100%;
+            overflow-x: auto; /* Aggiunto overflow-x per visualizzare le immagini in eccesso */
         }
         
         .image-container img {
-            max-width: 300px;
-            height: auto;
+            max-height: 300px;
+            width: auto;
             margin: 0 10px; /* Aggiunto margine a sinistra e a destra */
         }
 
