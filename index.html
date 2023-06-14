@@ -67,70 +67,145 @@
             const sizeOrder = ['128', '140', '152', '6Y', '6 ANNI', '8Y', '8 ANNI', '10Y', '10 ANNI', '12Y', '12 ANNI', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', 'XXL (2XL)', 'XXXL', '3XL', 'XXXL (3XL)', 'XXXXL', '4XL', 'XXXXL (4XL)'];
             return sizeOrder.indexOf(size);
         }
-
-
-        // Funzione per ordinare gli oggetti in base alla colonna specificata
-        function sortByColumn(csvData, columnIndex) {
+    
+        // Funzione per rendere tutto il file CSV in maiuscolo
+        function convertToUppercase(csvData) {
             const rows = csvData.split('\n');
-
+    
             // Rimuovi l'ultima riga se è vuota
             if (rows[rows.length - 1] === '') {
                 rows.pop();
             }
+    
+            // Rendi maiuscole tutte le righe
+            const upperCaseRows = rows.map(row => row.toUpperCase());
+    
+            // Ricostruisci il file CSV tutto in maiuscolo
+            const upperCaseCsv = upperCaseRows.join('\n');
+    
+            return upperCaseCsv;
+        }
+    
 
+// Funzione per rinominare le colonne del file CSV
+function renameColumns(csvData) {
+  const rows = csvData.split('\n');
+
+  // Rimuovi l'ultima riga se è vuota
+  if (rows[rows.length - 1] === '') {
+    rows.pop();
+  }
+
+  // Rinomina le colonne specificate
+  const header = rows[0];
+  const columns = header.split(',');
+
+  for (let i = 0; i < columns.length; i++) {
+    let column = columns[i].toUpperCase();
+    if (column.includes('GIOCATORI') || column.includes('NOM')) {
+      column = 'NOME / NAME';
+    }
+    if (column.includes('PANTA') || column.includes('SHORT')) {
+      column = 'PANTALONCINO / SHORTS';
+    }
+    if (column.includes('NUM')) {
+      column = 'NUMERO / NUMBER';
+    }
+    if (column.includes('MAGLIA') || column.includes('SHIRT')) {
+      column = 'MAGLIA / SHIRT';
+    }
+
+    // Eccezioni
+    if (column.includes('TUTA PANTA')) {
+      column = 'TUTA PANTA / TROUSER SUIT';
+    }
+
+    if (column.includes('TUTA GIAC')) {
+      column = 'TUTA GIACCA / SUIT JACKET';
+    }
+    columns[i] = column;
+  }
+
+  const renamedHeader = columns.join(',');
+
+  rows[0] = renamedHeader;
+
+  // Ricostruisci il file CSV con le colonne rinominate
+  const renamedCsv = rows.join('\n');
+
+  return renamedCsv;
+}
+
+
+    
+        // Funzione per ordinare gli oggetti in base alla colonna specificata
+        function sortByColumn(csvData, columnIndex) {
+            const rows = csvData.split('\n');
+    
+            // Rimuovi l'ultima riga se è vuota
+            if (rows[rows.length - 1] === '') {
+                rows.pop();
+            }
+    
             // Rimuovi l'header
             const header = rows.shift();
-
+    
             //trova il separatore
             let sep = document.getElementById('sep').value;
-            if(sep == ""){
+            if (sep == "") {
                 console.log("SEPARATORE STANDARD");
             }
-            
+    
             // Ordina gli oggetti in base alla colonna specificata
             rows.sort((a, b) => {
                 const columnsA = a.split(sep);
                 const columnsB = b.split(sep);
-
+    
                 const sizeA = columnsA[columnIndex - 1] ? columnsA[columnIndex - 1].trim() : '';
                 const sizeB = columnsB[columnIndex - 1] ? columnsB[columnIndex - 1].trim() : '';
-
+    
                 const sizeOrderIndexA = getSizeOrderIndex(sizeA);
                 const sizeOrderIndexB = getSizeOrderIndex(sizeB);
-
+    
                 return sizeOrderIndexA - sizeOrderIndexB;
             });
-
+    
             // Ricostruisci il file CSV ordinato
             const sortedCsv = [header, ...rows].join('\n');
-
+    
             return sortedCsv;
         }
-
+    
         function processCSV() {
             // Leggi il file CSV
             const inputElement = document.createElement('input');
             inputElement.type = 'file';
             inputElement.accept = '.csv';
-            inputElement.onchange = function(event) {
+            inputElement.onchange = function (event) {
                 const file = event.target.files[0];
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     const csvData = e.target.result;
-
+    
+                    // Rendi tutto il file CSV in maiuscolo
+                    const upperCaseCsv = convertToUppercase(csvData);
+    
+                    // Rinomina le colonne del file CSV
+                    const renamedCsv = renameColumns(upperCaseCsv);
+    
                     // Specifica il numero di colonna da ordinare
                     let numColInput = document.getElementById('numCol');
                     const columnIndex = parseInt(numColInput.value);
-
-                    // Ordina gli oggetti per la colonna specificata
-                    const sortedCsv = sortByColumn(csvData, columnIndex);
-
+    
+                    // Ordina gli oggetti per la colonna specificata nel CSV rinominato
+                    const sortedCsv = sortByColumn(renamedCsv, columnIndex);
+    
                     // Crea un oggetto Blob con i dati ordinati
                     const blob = new Blob([sortedCsv], { type: 'text/csv' });
-
+    
                     // Crea un URL temporaneo per il download del file
                     const url = URL.createObjectURL(blob);
-
+    
                     // Crea un link per il download e simula il clic
                     const downloadLink = document.createElement('a');
                     downloadLink.href = url;
@@ -139,13 +214,13 @@
                     document.body.appendChild(downloadLink);
                     downloadLink.click();
                     document.body.removeChild(downloadLink);
-
+    
                     // Rilascia l'URL temporaneo
                     URL.revokeObjectURL(url);
-
+    
                     console.log('File CSV ordinato è stato creato con successo.');
                 };
-                reader.onerror = function() {
+                reader.onerror = function () {
                     console.error('Errore nella lettura del file.');
                 };
                 reader.readAsText(file);
@@ -153,5 +228,7 @@
             inputElement.click();
         }
     </script>
+    
+    
 </body>
 </html>
