@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FDT | Raggruppa CSV</title>
+    <link rel="icon" href="https://fiorenzofdt.com/wp-content/uploads/fiorenzo-digital-teamwear.jpg">
+    <style>
+        body {
+            background-color: rgb(0, 0, 0);
+            color: rgb(255, 255, 255);
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            display: flex;
+            justify-content: center;
+            height: 70vh;
+            align-items: center;
+            margin-top: 100px;
+        }
+
+        #container {
+            text-align: center;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            padding: 20px;
+            background-color: #202020;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        button {
+            background-color: #ff0000;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 3px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="text"]::placeholder {
+            color: #ffffff;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        input[type="number"]::placeholder {
+            color: #ffffff;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        input[type="text"] {
+            width: 250px;
+            margin-right: 10px;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        button:hover {
+            background-color: #470101;
+            
+        }
+
+        .scuro {
+            background-color: #111111;
+        }
+    </style>
+    <script>
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const contents = e.target.result;
+                document.getElementById('csvData').value = contents;
+            };
+
+            reader.readAsText(file);
+        }
+
+        function groupByColumn() {
+            const csvData = document.getElementById('csvData').value;
+            const rows = csvData.split('\n');
+
+            if (rows[rows.length - 1].trim() === '') {
+                rows.pop(); // Remove the last empty row if present
+            }
+
+            const separator = document.getElementById('sep').value;
+            const column = parseInt(document.getElementById('numCol').value);
+
+            const dataMap = new Map();
+
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i].split(separator);
+                const key = row[column];
+                if (dataMap.has(key)) {
+                    dataMap.get(key).push(row);
+                } else {
+                    dataMap.set(key, [row]);
+                }
+            }
+
+            let groupedCsv = rows[0] + '\n'; // Add header row to grouped CSV
+
+            for (const [key, rows] of dataMap) {
+                for (const row of rows) {
+                    groupedCsv += row.join(separator) + '\n';
+                }
+            }
+
+            const encodedUri = encodeURI(groupedCsv);
+            const link = document.createElement('a');
+            link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodedUri);
+            link.setAttribute('download', 'grouped_data.csv');
+            link.style.display = 'none';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</head>
+<body>
+    <div id="container">
+        <img src="https://fiorenzofdt.com/wp-content/themes/sublimatico1.4/images/fiorenzo-digital-teamwear.gif">
+        <br><br>
+        <input type="file" id="fileInput" onchange="handleFileSelect(event)">
+        <br><br>
+        <textarea id="csvData" rows="10" cols="50" placeholder="Inserisci i dati CSV"></textarea>
+        <br><br>
+        Separatore: <input type="text" id="sep" placeholder="Inserisci separatore (, / ;)">
+        <br><br>
+        Colonna squadre: <input type="number" id="numCol" placeholder="Inserisci colonna">
+        <br><br>
+        <button class="scuro" onclick="groupByColumn()">Raggruppa CSV</button>
+        <button class="scuro" onclick='window.location.href = "./index.html"'>Home</button>
+    </div>
+</body>
+</html>
