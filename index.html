@@ -84,9 +84,6 @@
 
     <script>
 
-let csvBlob;
-
-
 function convertXlsToCsv() {
       const fileInput = document.getElementById('xlsFile');
       const file = fileInput.files[0];
@@ -113,9 +110,13 @@ function convertXlsToCsv() {
         });
 
         // Create a Blob with the CSV content
-        csvBlob = new Blob([csvContent], { type: 'text/csv' });
+        const csvBlob = new Blob([csvContent], { type: 'text/csv' });
 
-        
+        // Create a download link for the CSV file
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(csvBlob);
+        downloadLink.download = file.name.replace('.xls', '.csv');
+        downloadLink.click();
       };
 
       reader.onerror = function (error) {
@@ -123,8 +124,6 @@ function convertXlsToCsv() {
       };
 
       reader.readAsArrayBuffer(file);
-
-      
     }
 
 
@@ -305,47 +304,63 @@ function convertXlsToCsv() {
 
 
         function processCSV() {
-    const csvData = csvBlob;
+            // Leggi il file CSV
+            const inputElement = document.createElement('input');
+            inputElement.type = 'file';
+            inputElement.accept = '.csv';
+            inputElement.onchange = function (event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const csvData = e.target.result;
 
-    // Rendi tutto il file CSV in maiuscolo
-    const upperCaseCsv = convertToUppercase(csvData);
+                    // Rendi tutto il file CSV in maiuscolo
+                    const upperCaseCsv = convertToUppercase(csvData);
 
-    // Rimuovi le righe vuote dal file CSV
-    const nonEmptyCsv = removeEmptyRows(upperCaseCsv);
+                    // Rimuovi le righe vuote dal file CSV
+                    const nonEmptyCsv = removeEmptyRows(upperCaseCsv);
 
-    // Rinomina le colonne del file CSV
-    const renamedCsv = renameColumns(nonEmptyCsv);
+                    // Rinomina le colonne del file CSV
+                    const renamedCsv = renameColumns(nonEmptyCsv);
 
-    // Specifica il numero di colonna da ordinare
-    let numColInput = document.getElementById('numCol');
-    const columnIndex = parseInt(numColInput.value);
+                    // Specifica il numero di colonna da ordinare
+                    let numColInput = document.getElementById('numCol');
+                    const columnIndex = parseInt(numColInput.value);
 
-    // Ordina gli oggetti per la colonna specificata nel CSV
-    const sortedCsv = sortByColumn(renamedCsv, columnIndex);
+                    // Ordina gli oggetti per la colonna specificata nel CSV
+                    const sortedCsv = sortByColumn(renamedCsv, columnIndex);
 
-    // Crea un oggetto Blob con i dati ordinati
-    const blob = new Blob([sortedCsv], { type: 'text/csv' });
+                    // Crea un oggetto Blob con i dati ordinati
+                    const blob = new Blob([sortedCsv], { type: 'text/csv' });
 
-    // Crea un URL temporaneo per il download del file
-    const url = URL.createObjectURL(blob);
+                    // Crea un URL temporaneo per il download del file
+                    const url = URL.createObjectURL(blob);
 
-    // Crea un link per il download e simula il clic
-    const downloadLink = document.createElement('a');
-    downloadLink.href = url;
-    downloadLink.download = 'output.csv';
-    downloadLink.style.display = 'none';
-    document.body.appendChild(downloadLink);
-    downloadLink.click();
-    document.body.removeChild(downloadLink);
+                    
+                    // Crea un link per il download e simula il clic
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = url;
+                    downloadLink.download = 'output.csv';
+                    downloadLink.style.display = 'none';
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
 
-    // Rilascia l'URL temporaneo
-    URL.revokeObjectURL(url);
+                    // Rilascia l'URL temporaneo
+                    URL.revokeObjectURL(url);
 
-    console.log('File CSV ordinato è stato creato con successo.');
-}
-
+                    console.log('File CSV ordinato è stato creato con successo.');
+                };
+                reader.onerror = function () {
+                    console.error('Errore nella lettura del file.');
+                };
+                reader.readAsText(file);
+            };
+            inputElement.click();
+        }
     </script>
 
 
 </body>
 </html>
+
