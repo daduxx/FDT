@@ -85,7 +85,8 @@
             }
 
             const separator = document.getElementById('sep').value;
-            const column = parseInt(document.getElementById('numCol').value);
+            const column = parseInt(document.getElementById('numCol').value) - 1;
+
 
             const dataMap = new Map();
 
@@ -97,6 +98,7 @@
                 } else {
                     dataMap.set(key, [row]);
                 }
+
             }
 
             let groupedCsv = rows[0] + '\n'; // Add header row to grouped CSV
@@ -116,6 +118,8 @@
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+
+            
         }
     </script>
 </head>
