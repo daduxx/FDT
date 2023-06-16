@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://fiorenzofdt.com/wp-content/uploads/fiorenzo-digital-teamwear.jpg" >
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/papaparse@5.0.0-beta.2"></script>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/jquery"></script>
+
+    <title>FDT | Formattamento Taglie</title>
+
+    <style>
+        body {
+            background-color: rgb(0, 0, 0);
+            color: rgb(255, 255, 255);
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            display: flex;
+            justify-content: center;
+            height: 70vh;
+            align-items: center;
+            margin: 0;
+        }
+
+        #container {
+            text-align: center;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            padding: 20px;
+            background-color: #202020;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"], button {
+            background-color: red;
+            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 3px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="text"]::placeholder { 
+            color: white;
+        }
+
+        input[type="text"] {
+            width: 250px;
+            margin-right: 10px;
+            ;
+        }
+
+        button:hover {
+            background-color: #990000;
+        }
+
+        .scuro {
+            background-color: #111111;
+        }
+
+    </style>
+
+</head>
+<body>
+    <div id="container">
+        <img src="https://fiorenzofdt.com/wp-content/themes/sublimatico1.4/images/fiorenzo-digital-teamwear.gif">
+        <br><br><br>
+        <input type="text" id="numCol" placeholder="Inserisci colonna"> 
+        <input type="text" id="sep" placeholder="Inserisci separatore (, / ;)">  <br><br>
+
+        <input type="file" id="xlsFile" accept=".xls" />
+        <button onclick="convertXlsToCsv()">Convert</button>
+
+
+        <button onclick="processCSV()">Ordina CSV</button>
+        <br><br>
+        <button class="scuro" onclick='window.location.href = "./info.html"'>Info</button>
+        <button class="scuro" onclick='window.location.href = "./raggruppa.html"'>Formattatore Squadre</button>
+    </div>
+
+    <script>
+
+let csvBlob;
+
+
+function convertXlsToCsv() {
+      const fileInput = document.getElementById('xlsFile');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        console.error('Seleziona un file XLS.');
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = function (event) {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        let csvContent = '';
+
+        jsonData.forEach(row => {
+          const rowString = row.join(',');
+          csvContent += rowString + '\n';
+        });
+
+        // Create a Blob with the CSV content
+        csvBlob = new Blob([csvContent], { type: 'text/csv' });
+
+        
+      };
+
+      reader.onerror = function (error) {
+        console.error('Errore durante la lettura del file XLS:', error);
+      };
+
+      reader.readAsArrayBuffer(file);
+
+      
+    }
+
+
+            //-------------------------------------------------------
+
+
+            // Funzione per ottenere l'indice dell'ordine delle taglie
+        function getSizeOrderIndex(size) {
+            const sizeOrder = ['128', '140', '152', '6Y', '6 ANNI', '8Y', '8 ANNI', '10Y', '10 ANNI', '12Y', '12 ANNI', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', 'XXL (2XL)', 'XXXL', '3XL', 'XXXL (3XL)', 'XXXXL', '4XL', 'XXXXL (4XL)'];
+            return sizeOrder.indexOf(size);
+        }
+
+        // Funzione per rimuovere le righe con tutte le colonne vuote
+        function removeEmptyRows(csvData) {
+            const rows = csvData.split('\n');
+
+            // Rimuovi l'ultima riga se è vuota
+            if (rows[rows.length - 1] === '') {
+                rows.pop();
+            }
+
+            // Filtra le righe rimuovendo quelle con tutte le colonne vuote
+            const nonEmptyRows = rows.filter(row => {
+                const columns = row.split(',');
+                return columns.some(column => column.trim() !== '');
+            });
+
+            // Ricostruisci il file CSV con le righe non vuote
+            const nonEmptyCsv = nonEmptyRows.join('\n');
+
+            return nonEmptyCsv;
+        }
+
+        // Funzione per rendere tutto il file CSV in maiuscolo
+        function convertToUppercase(csvData) {
+            const rows = csvData.split('\n');
+
+            // Rimuovi l'ultima riga se è vuota
+            if (rows[rows.length - 1] === '') {
+                rows.pop();
+            }
+
+            // Rendi maiuscole tutte le righe
+            const upperCaseRows = rows.map(row => row.toUpperCase());
+
+            // Ricostruisci il file CSV tutto in maiuscolo
+            const upperCaseCsv = upperCaseRows.join('\n');
+
+            return upperCaseCsv;
+        }
+
+        // Funzione per raggruppare gli oggetti con l'ultima colonna uguale
+        function groupByLastColumn(csvData) {
+            const rows = csvData.split('\n');
+
+            // Rimuovi l'ultima riga se è vuota
+            if (rows[rows.length - 1] === '') {
+                rows.pop();
+            }
+
+            // Crea un oggetto mappa per raggruppare gli oggetti
+            const groupedData = {};
+
+            rows.forEach(row => {
+                const columns = row.split(',');
+
+                // Ottieni l'ultima colonna
+                const lastColumn = columns[columns.length - 1].trim();
+
+                // Se la chiave già esiste nell'oggetto mappa, aggiungi la riga ad essa
+                if (groupedData.hasOwnProperty(lastColumn)) {
+                    groupedData[lastColumn].push(row);
+                }
+                // Altrimenti, crea una nuova chiave nell'oggetto mappa e inizializzala con la riga corrente
+                else {
+                    groupedData[lastColumn] = [row];
+                }
+            });
+
+            // Crea un array di righe raggruppate
+            const groupedRows = Object.values(groupedData).map(group => group.join('\n'));
+
+            // Ricostruisci il file CSV con le righe raggruppate
+            const groupedCsv = groupedRows.join('\n');
+
+            return groupedCsv;
+        }
+
+        // Funzione per rinominare le colonne del file CSV e rimuovere le righe precedenti all'indice specificato
+        function renameColumns(csvData, indiceCambiamenti) {
+            const rows = csvData.split('\n');
+
+            // Rimuovi l'ultima riga se è vuota
+            if (rows[rows.length - 1] === '') {
+                rows.pop();
+            }
+
+            const header = rows[0];
+            const columns = header.split(',');
+
+            for (let i = 0; i < columns.length; i++) {
+                let column = columns[i].toUpperCase();
+
+                // Rinomina le colonne specificate
+                if (column.includes('GIOCATORI') || column.includes('NOM') || column.includes('NAAM')) {
+                    column = 'NOME / NAME';
+                }
+                if (column.includes('PANTA') || column.includes('SHORT')) {
+                    column = 'PANTALONCINO / SHORTS';
+                }
+                if (column.includes('NUM')) {
+                    column = 'NUMERO / NUMBER';
+                }
+                if (column.includes('MAGLIA') || column.includes('SHIRT')) {
+                    column = 'MAGLIA / SHIRT';
+                }
+
+                // Eccezioni
+                if (column.includes('TUTA PANTA')) {
+                    column = 'TUTA PANTA / TROUSER SUIT';
+                }
+                if (column.includes('TUTA GIAC')) {
+                    column = 'TUTA GIACCA / SUIT JACKET';
+                }
+
+                columns[i] = column;
+            }
+
+            const renamedHeader = columns.join(',');
+            rows[0] = renamedHeader;
+
+            // Rimuovi le righe precedenti all'indice specificato
+            rows.splice(1, indiceCambiamenti - 1);
+
+            // Ricostruisci il file CSV con le colonne rinominate e le righe eliminate
+            const renamedCsv = rows.join('\n');
+
+            return renamedCsv;
+        }
+
+        // Funzione per ordinare gli oggetti in base alla colonna specificata
+        function sortByColumn(csvData, columnIndex) {
+            const rows = csvData.split('\n');
+
+            // Rimuovi l'ultima riga se è vuota
+            if (rows[rows.length - 1] === '') {
+                rows.pop();
+            }
+
+            // Rimuovi l'header
+            const header = rows.shift();
+
+            //trova il separatore
+            let sep = document.getElementById('sep').value;
+            if (sep == "") {
+                console.log("SEPARATORE STANDARD");
+            }
+
+            // Ordina gli oggetti in base alla colonna specificata
+            rows.sort((a, b) => {
+                const columnsA = a.split(sep);
+                const columnsB = b.split(sep);
+
+                const sizeA = columnsA[columnIndex - 1] ? columnsA[columnIndex - 1].trim() : '';
+                const sizeB = columnsB[columnIndex - 1] ? columnsB[columnIndex - 1].trim() : '';
+
+                const sizeOrderIndexA = getSizeOrderIndex(sizeA);
+                const sizeOrderIndexB = getSizeOrderIndex(sizeB);
+
+                return sizeOrderIndexA - sizeOrderIndexB;
+            });
+
+            // Ricostruisci il file CSV ordinato
+            const sortedCsv = [header, ...rows].join('\n');
+
+            return sortedCsv;
+        }
+
+
+        function processCSV() {
+    const csvData = csvBlob;
+
+    // Rendi tutto il file CSV in maiuscolo
+    const upperCaseCsv = convertToUppercase(csvData);
+
+    // Rimuovi le righe vuote dal file CSV
+    const nonEmptyCsv = removeEmptyRows(upperCaseCsv);
+
+    // Rinomina le colonne del file CSV
+    const renamedCsv = renameColumns(nonEmptyCsv);
+
+    // Specifica il numero di colonna da ordinare
+    let numColInput = document.getElementById('numCol');
+    const columnIndex = parseInt(numColInput.value);
+
+    // Ordina gli oggetti per la colonna specificata nel CSV
+    const sortedCsv = sortByColumn(renamedCsv, columnIndex);
+
+    // Crea un oggetto Blob con i dati ordinati
+    const blob = new Blob([sortedCsv], { type: 'text/csv' });
+
+    // Crea un URL temporaneo per il download del file
+    const url = URL.createObjectURL(blob);
+
+    // Crea un link per il download e simula il clic
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = 'output.csv';
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+
+    // Rilascia l'URL temporaneo
+    URL.revokeObjectURL(url);
+
+    console.log('File CSV ordinato è stato creato con successo.');
+}
+
+    </script>
+
+
+</body>
+</html>
