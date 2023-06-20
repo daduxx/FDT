@@ -158,22 +158,28 @@ function convertXlsToCsv() {
         }
 
         // Funzione per rendere tutto il file CSV in maiuscolo
-        function convertToUppercase(csvData) {
-            const rows = csvData.split('\n');
+        function convertColumnToUppercase(csvData, columnIndex) {
+  const rows = csvData.split('\n');
 
-            // Rimuovi l'ultima riga se è vuota
-            if (rows[rows.length - 1] === '') {
-                rows.pop();
-            }
+  // Rimuovi l'ultima riga se è vuota
+  if (rows[rows.length - 1] === '') {
+    rows.pop();
+  }
 
-            // Rendi maiuscole tutte le righe
-            const upperCaseRows = rows.map(row => row.toUpperCase());
+  // Converte la colonna specificata in maiuscolo
+  const modifiedRows = rows.map(row => {
+    const columns = row.split(',');
+    if (columns[columnIndex]) {
+      columns[columnIndex] = columns[columnIndex].toUpperCase();
+    }
+    return columns.join(',');
+  });
 
-            // Ricostruisci il file CSV tutto in maiuscolo
-            const upperCaseCsv = upperCaseRows.join('\n');
+  // Ricostruisci il file CSV con la colonna convertita in maiuscolo
+  const modifiedCsv = modifiedRows.join('\n');
 
-            return upperCaseCsv;
-        }
+  return modifiedCsv;
+}
 
         // Funzione per raggruppare gli oggetti con l'ultima colonna uguale
         function groupByLastColumn(csvData) {
