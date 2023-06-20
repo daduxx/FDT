@@ -44,7 +44,7 @@
             transition: background-color 0.3s ease;
         }
 
-        input[type="text"]::placeholder { 
+        input[type="text"]::placeholder {
             color: white;
         }
 
@@ -69,7 +69,7 @@
     <div id="container">
         <img src="https://fiorenzofdt.com/wp-content/themes/sublimatico1.4/images/fiorenzo-digital-teamwear.gif">
         <br><br><br>
-        <input type="text" id="numCol" placeholder="Inserisci colonna"> 
+        <input type="text" id="numCol" placeholder="Inserisci colonna">
         <input type="text" id="sep" placeholder="Inserisci separatore (, / ;)">  <br><br>
 
         <input type="file" id="xlsFile" accept=".xls" />
@@ -265,35 +265,35 @@ function convertXlsToCsv() {
 
         // Funzione per ordinare gli oggetti in base alla colonna specificata
         function sortByColumn(csvData, columnIndex) {
-            const rows = csvData.split('\n');
+    const rows = csvData.split('\n');
 
-            // Rimuovi l'ultima riga se è vuota
-            if (rows[rows.length - 1] === '') {
-                rows.pop();
-            }
+    // Rimuovi l'ultima riga se è vuota
+    if (rows[rows.length - 1] === '') {
+        rows.pop();
+    }
 
-            // Rimuovi l'header
-            const header = rows.shift();
+    // Rimuovi l'header
+    const header = rows.shift();
 
-            //trova il separatore
-            let sep = document.getElementById('sep').value;
-            if (sep == "") {
-                console.log("SEPARATORE STANDARD");
-            }
+    // Trova il separatore
+    let sep = document.getElementById('sep').value;
+    if (sep == "") {
+        console.log("SEPARATORE STANDARD");
+    }
 
-            // Ordina gli oggetti in base alla colonna specificata
-            rows.sort((a, b) => {
-                const columnsA = a.split(sep);
-                const columnsB = b.split(sep);
+    // Ordina gli oggetti in base alla colonna specificata
+    rows.sort((a, b) => {
+        const columnsA = a.split(sep);
+        const columnsB = b.split(sep);
 
-                const sizeA = columnsA[columnIndex - 1] ? columnsA[columnIndex - 1].trim() : '';
-                const sizeB = columnsB[columnIndex - 1] ? columnsB[columnIndex - 1].trim() : '';
+        const sizeA = columnsA[columnIndex - 1] ? columnsA[columnIndex - 1].replace(/\./g, '').trim() : '';
+        const sizeB = columnsB[columnIndex - 1] ? columnsB[columnIndex - 1].replace(/\./g, '').trim() : '';
 
-                const sizeOrderIndexA = getSizeOrderIndex(sizeA);
-                const sizeOrderIndexB = getSizeOrderIndex(sizeB);
+        const sizeOrderIndexA = getSizeOrderIndex(sizeA);
+        const sizeOrderIndexB = getSizeOrderIndex(sizeB);
 
-                return sizeOrderIndexA - sizeOrderIndexB;
-            });
+        return sizeOrderIndexA - sizeOrderIndexB;
+    });
 
             // Ricostruisci il file CSV ordinato
             const sortedCsv = [header, ...rows].join('\n');
@@ -335,7 +335,7 @@ function convertXlsToCsv() {
                     // Crea un URL temporaneo per il download del file
                     const url = URL.createObjectURL(blob);
 
-                    
+                   
                     // Crea un link per il download e simula il clic
                     const downloadLink = document.createElement('a');
                     downloadLink.href = url;
@@ -362,4 +362,3 @@ function convertXlsToCsv() {
 
 </body>
 </html>
-
