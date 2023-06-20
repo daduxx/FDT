@@ -131,7 +131,8 @@ function convertXlsToCsv() {
 
             // Funzione per ottenere l'indice dell'ordine delle taglie
         function getSizeOrderIndex(size) {
-            const sizeOrder = ['128', '140', '152', '6Y', '6 ANNI', '8Y', '8 ANNI', '10Y', '10 ANNI', '12Y', '12 ANNI', '6XS', '5XS', '4XS', 'XXXXS', '3XS', 'XXXS', 'XXS', '2XS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', 'XXL (2XL)', 'XXXL', '3XL', 'XXXL (3XL)', 'XXXXL', '4XL', 'XXXXL (4XL)', '5XL', '6XL'];
+            const sizeOrder = ['128', '.128', '128.', '.128.', '140', '.140', '140.', '.140.', '152', '.152', '152.', '.152.', '6Y', '.6Y', '6Y.', '.6Y.', '6 ANNI', '.6 ANNI', '6 ANNI.', '.6 ANNI.', '8Y', '.8Y', '8Y.', '.8Y.', '8 ANNI', '.8 ANNI', '8 ANNI.', '.8 ANNI.', '10Y', '.10Y', '10Y.', '.10Y.', '10 ANNI', '.10 ANNI', '10 ANNI.', '.10 ANNI.', '12Y', '.12Y', '12Y.', '.12Y.', '12 ANNI', '.12 ANNI', '12 ANNI.', '.12 ANNI.', '6XS', '.6XS', '6XS.', '.6XS.', '5XS', '.5XS', '5XS.', '.5XS.', '4XS', '.4XS', '4XS.', '.4XS.', 'XXXXS', '.XXXXS', 'XXXXS.', '.XXXXS.', '3XS', '.3XS', '3XS.', '.3XS.', 'XXXS', '.XXXS', 'XXXS.', '.XXXS.', 'XXS', '.XXS', 'XXS.', '.XXS.', '2XS', '.2XS', '2XS.', '.2XS.', 'XS', '.XS', 'XS.', '.XS.', 'S', '.S', 'S.', '.S.', 'M', '.M', 'M.', '.M.', 'L', '.L', 'L.', '.L.', 'XL', '.XL', 'XL.', '.XL.', 'XXL', '.XXL', 'XXL.', '.XXL.', '2XL', '.2XL', '2XL.', '.2XL.', 'XXL (2XL)', '.XXL (2XL)', 'XXL (2XL).', '.XXL (2XL).', 'XXXL', '.XXXL', 'XXXL.', '.XXXL.', '3XL', '.3XL', '3XL.', '.3XL.', 'XXXL (3XL)', '.XXXL (3XL)', 'XXXL (3XL).', '.XXXL (3XL).', 'XXXXL', '.XXXXL', 'XXXXL.', '.XXXXL.', '4XL', '.4XL', '4XL.', '.4XL.', 'XXXXL (4XL)', '.XXXXL (4XL)', 'XXXXL (4XL).', '.XXXXL (4XL).', '5XL', '.5XL', '5XL.', '.5XL.', '6XL', '.6XL', '6XL.', '.6XL.']
+
             return sizeOrder.indexOf(size);
         }
 
@@ -265,35 +266,35 @@ function convertXlsToCsv() {
 
         // Funzione per ordinare gli oggetti in base alla colonna specificata
         function sortByColumn(csvData, columnIndex) {
-    const rows = csvData.split('\n');
+            const rows = csvData.split('\n');
 
-    // Rimuovi l'ultima riga se è vuota
-    if (rows[rows.length - 1] === '') {
-        rows.pop();
-    }
+            // Rimuovi l'ultima riga se è vuota
+            if (rows[rows.length - 1] === '') {
+                rows.pop();
+            }
 
-    // Rimuovi l'header
-    const header = rows.shift();
+            // Rimuovi l'header
+            const header = rows.shift();
 
-    // Trova il separatore
-    let sep = document.getElementById('sep').value;
-    if (sep == "") {
-        console.log("SEPARATORE STANDARD");
-    }
+            //trova il separatore
+            let sep = document.getElementById('sep').value;
+            if (sep == "") {
+                console.log("SEPARATORE STANDARD");
+            }
 
-    // Ordina gli oggetti in base alla colonna specificata
-    rows.sort((a, b) => {
-        const columnsA = a.split(sep);
-        const columnsB = b.split(sep);
+            // Ordina gli oggetti in base alla colonna specificata
+            rows.sort((a, b) => {
+                const columnsA = a.split(sep);
+                const columnsB = b.split(sep);
 
-        const sizeA = columnsA[columnIndex - 1] ? columnsA[columnIndex - 1].replace(/\./g, '').trim() : '';
-        const sizeB = columnsB[columnIndex - 1] ? columnsB[columnIndex - 1].replace(/\./g, '').trim() : '';
+                const sizeA = columnsA[columnIndex - 1] ? columnsA[columnIndex - 1].trim() : '';
+                const sizeB = columnsB[columnIndex - 1] ? columnsB[columnIndex - 1].trim() : '';
 
-        const sizeOrderIndexA = getSizeOrderIndex(sizeA);
-        const sizeOrderIndexB = getSizeOrderIndex(sizeB);
+                const sizeOrderIndexA = getSizeOrderIndex(sizeA);
+                const sizeOrderIndexB = getSizeOrderIndex(sizeB);
 
-        return sizeOrderIndexA - sizeOrderIndexB;
-    });
+                return sizeOrderIndexA - sizeOrderIndexB;
+            });
 
             // Ricostruisci il file CSV ordinato
             const sortedCsv = [header, ...rows].join('\n');
