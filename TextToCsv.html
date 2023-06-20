@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Convert to CSV</title>
+
+
+  <style>
+    body {
+        background-color: rgb(0, 0, 0);
+        color: rgb(255, 255, 255);
+        font-family:Verdana, Geneva, Tahoma, sans-serif;
+        display: flex;
+        justify-content: center;
+        height: 70vh;
+        align-items: center;
+        margin: 0;
+    }
+
+    #container {
+        text-align: center;
+        font-family:Verdana, Geneva, Tahoma, sans-serif;
+        padding: 20px;
+        background-color: #202020;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    input[type="text"], button {
+        background-color: red;
+        font-family:Verdana, Geneva, Tahoma, sans-serif;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 3px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    input[type="text"]::placeholder { 
+        color: white;
+    }
+
+    input[type="text"] {
+        width: 250px;
+        margin-right: 10px;
+        ;
+    }
+
+    button:hover {
+        background-color: #990000;
+    }
+
+    .scuro {
+        background-color: #111111;
+    }
+
+</style>
+
+
+
+</head>
+<body>
+
+    <div id="container">
+        <img src="https://fiorenzofdt.com/wp-content/themes/sublimatico1.4/images/fiorenzo-digital-teamwear.gif">
+        <br><br><br>
+
+  <textarea id="inputText" rows="10" cols="50"></textarea>
+
+  <br><br><br>
+  <button onclick="convertToCSV()">Converti in CSV</button>
+  <a id="downloadLink" style="display: none;">Scarica CSV</a>
+</div>
+
+  <script>
+    function convertToCSV() {
+      const inputText = document.getElementById("inputText").value.trim();
+      const lines = inputText.split("\n");
+      const data = [];
+
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i];
+
+        // Rimuovi spazi multipli tra parole
+        line = line.replace(/\s{3,}/g, ",");
+
+        // Rimuovi spazi tra parole e aggiungi virgola
+        line = line.replace(/\s+/g, " ");
+
+        // Sostituisci gli indici (dati)
+        line = line.replace(/NOME/g, 'NOME / NAME').replace(/TAGLIE/g, 'TAGLIA MAGLIA / SHIRT SIZE').replace(/NUMERO/g, 'NUMERO / NUMBER');
+
+        // Aggiungi riga ai dati se non è un separatore
+        if (line.replace(/,/g, "").trim() !== "") {
+          data.push(line);
+        }
+      }
+
+      // Formatta come CSV
+      const csvContent = data.join("\n");
+      const encodedCSV = encodeURIComponent(csvContent);
+
+      const downloadLink = document.getElementById("downloadLink");
+      downloadLink.setAttribute("href", "data:text/csv;charset=utf-8," + encodedCSV);
+      downloadLink.setAttribute("download", "data.csv");
+      downloadLink.style.display = "inline";
+    }
+  </script>
+</body>
+</html>
