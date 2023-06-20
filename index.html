@@ -158,23 +158,26 @@ function convertXlsToCsv() {
             return nonEmptyCsv;
         }
 
-        // Funzione per rendere tutto il file CSV in maiuscolo
+// Funzione per rendere maiuscola solo la colonna specificata
         function convertToUppercase(csvData, columnIndex) {
-  const rows = csvData.split('\n');
+            const rows = Papa.parse(csvData, {header: true}).data;
+            const convertedRows = rows.map(row => {
+                const keys = Object.keys(row);
+                const newRow = {};
+                for (let i = 0; i < keys.length; i++) {
+                    const key = keys[i];
+                    if (i === columnIndex) {
+                        newRow[key] = row[key].toUpperCase();
+                    } else {
+                        newRow[key] = row[key];
+                    }
+                }
+                return newRow;
+            });
+            const convertedCsv = Papa.unparse(convertedRows, {header: true});
+            return convertedCsv;
+        }
 
-  // Rimuovi l'ultima riga se è vuota
-  if (rows[rows.length - 1] === '') {
-    rows.pop();
-  }
-
-  // Converte la colonna specificata in maiuscolo
-  const modifiedRows = rows.map(row => {
-    const columns = row.split(',');
-    if (columns[columnIndex]) {
-      columns[columnIndex] = columns[columnIndex].toUpperCase();
-    }
-    return columns.join(',');
-  });
 
   // Ricostruisci il file CSV con la colonna convertita in maiuscolo
   const modifiedCsv = modifiedRows.join('\n');
