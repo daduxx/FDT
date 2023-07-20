@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="https://fiorenzofdt.com/wp-content/uploads/fiorenzo-digital-teamwear.jpg" >
+    <link rel="icon" href="https://fiorenzofdt.com/wp-content/uploads/fiorenzo-digital-teamwear.jpg">
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/papaparse@5.0.0-beta.2"></script>
     <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
@@ -13,24 +14,27 @@
         body {
             background-color: rgb(0, 0, 0);
             color: rgb(255, 255, 255);
-            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
             display: flex;
             justify-content: center;
             height: 70vh;
             align-items: center;
             margin: 0;
         }
+
         #container {
             text-align: center;
-            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
             padding: 20px;
             background-color: #202020;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        input[type="text"], button {
+
+        input[type="text"],
+        button {
             background-color: red;
-            font-family:Verdana, Geneva, Tahoma, sans-serif;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
             color: white;
             border: none;
             padding: 8px 16px;
@@ -39,30 +43,34 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
+
         input[type="text"]::placeholder {
             color: white;
         }
+
         input[type="text"] {
             width: 250px;
             margin-right: 10px;
             ;
         }
+
         button:hover {
             background-color: #990000;
         }
+
         .scuro {
             background-color: #111111;
         }
     </style>
 </head>
+
 <body>
     <div id="container">
         <img src="https://fiorenzofdt.com/wp-content/themes/sublimatico1.4/images/fiorenzo-digital-teamwear.gif">
         <br><br><br>
         <input type="text" id="numCol" placeholder="Inserisci colonna">
-        <input type="text" id="sep" placeholder="Inserisci separatore (, / ;)">  <br><br>
-        <br>
-        <button onclick="processCSV()">Ordina XLS</button>
+        <input type="text" id="sep" placeholder="Inserisci separatore (, / ;)"> <br><br>
+        <button onclick="processCSV()">Ordina CSV</button>
         <br><br>
         <button class="scuro" onclick='window.location.href = "./info.html"'>Info</button>
         <button class="scuro" onclick='window.location.href = "./raggruppa.html"'>Formattatore Squadre</button>
@@ -70,39 +78,8 @@
     </div>
 
     <script>
-function convertXlsToCsv() {
-      const fileInput = document.getElementById('xlsFile');
-      const file = fileInput.files[0];
-      if (!file) {
-        console.error('Seleziona un file XLS.');
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = function (event) {
-        const data = new Uint8Array(event.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        let csvContent = '';
-        jsonData.forEach(row => {
-          const rowString = row.join(',');
-          csvContent += rowString + '\n';
-        });
-        // Create a Blob with the CSV content
-        const csvBlob = new Blob([csvContent], { type: 'text/csv' });
-        // Create a download link for the CSV file
-        const downloadLink = document.createElement('a');
-        downloadLink.href = URL.createObjectURL(csvBlob);
-        downloadLink.download = file.name.replace('.xls', '.csv');
-        downloadLink.click();
-      };
-      reader.onerror = function (error) {
-        console.error('Errore durante la lettura del file XLS:', error);
-      };
-      reader.readAsArrayBuffer(file);
-    }
-            //-------------------------------------------------------
-            // Funzione per ottenere l'indice dell'ordine delle taglie
+        //-------------------------------------------------------
+        // Funzione per ottenere l'indice dell'ordine delle taglie
         function getSizeOrderIndex(size) {
             const sizeOrder = ['128', '.128', '128.', '.128.', '140', '.140', '140.', '.140.', '152', '.152', '152.', '.152.', '6Y', '.6Y', '6Y.', '.6Y.', '6 ANNI', '.6 ANNI', '6 ANNI.', '.6 ANNI.', '8Y', '.8Y', '8Y.', '.8Y.', '8 ANNI', '.8 ANNI', '8 ANNI.', '.8 ANNI.', '10Y', '.10Y', '10Y.', '.10Y.', '10 ANNI', '.10 ANNI', '10 ANNI.', '.10 ANNI.', '12Y', '.12Y', '12Y.', '.12Y.', '12 ANNI', '.12 ANNI', '12 ANNI.', '.12 ANNI.', '6XS', '.6XS', '6XS.', '.6XS.', '5XS', '.5XS', '5XS.', '.5XS.', '4XS', '.4XS', '4XS.', '.4XS.', 'XXXXS', '.XXXXS', 'XXXXS.', '.XXXXS.', '3XS', '.3XS', '3XS.', '.3XS.', 'XXXS', '.XXXS', 'XXXS.', '.XXXS.', 'XXS', '.XXS', 'XXS.', '.XXS.', '2XS', '.2XS', '2XS.', '.2XS.', 'XS', '.XS', 'XS.', '.XS.', 'S', '.S', 'S.', '.S.', 'M', '.M', 'M.', '.M.', 'L', '.L', 'L.', '.L.', 'XL', '.XL', 'XL.', '.XL.', 'XXL', '.XXL', 'XXL.', '.XXL.', '2XL', '.2XL', '2XL.', '.2XL.', 'XXL (2XL)', '.XXL (2XL)', 'XXL (2XL).', '.XXL (2XL).', 'XXXL', '.XXXL', 'XXXL.', '.XXXL.', '3XL', '.3XL', '3XL.', '.3XL.', 'XXXL (3XL)', '.XXXL (3XL)', 'XXXL (3XL).', '.XXXL (3XL).', 'XXXXL', '.XXXXL', 'XXXXL.', '.XXXXL.', '4XL', '.4XL', '4XL.', '.4XL.', 'XXXXL (4XL)', '.XXXXL (4XL)', 'XXXXL (4XL).', '.XXXXL (4XL).', '5XL', '.5XL', '5XL.', '.5XL.', '6XL', '.6XL', '6XL.', '.6XL.']
             return sizeOrder.indexOf(size);
@@ -125,23 +102,23 @@ function convertXlsToCsv() {
         }
         // Funzione per rendere tutto il file CSV in maiuscolo
         function convertToUppercase(csvData, columnIndex) {
-  const rows = csvData.split('\n');
-  // Rimuovi l'ultima riga se è vuota
-  if (rows[rows.length - 1] === '') {
-    rows.pop();
-  }
-  // Converte la colonna specificata in maiuscolo
-  const modifiedRows = rows.map(row => {
-    const columns = row.split(',');
-    if (columns[columnIndex]) {
-      columns[columnIndex] = columns[columnIndex].toUpperCase();
-    }
-    return columns.join(',');
-  });
-  // Ricostruisci il file CSV con la colonna convertita in maiuscolo
-  const modifiedCsv = modifiedRows.join('\n');
-  return modifiedCsv;
-}
+            const rows = csvData.split('\n');
+            // Rimuovi l'ultima riga se è vuota
+            if (rows[rows.length - 1] === '') {
+                rows.pop();
+            }
+            // Converte la colonna specificata in maiuscolo
+            const modifiedRows = rows.map(row => {
+                const columns = row.split(',');
+                if (columns[columnIndex]) {
+                    columns[columnIndex] = columns[columnIndex].toUpperCase();
+                }
+                return columns.join(',');
+            });
+            // Ricostruisci il file CSV con la colonna convertita in maiuscolo
+            const modifiedCsv = modifiedRows.join('\n');
+            return modifiedCsv;
+        }
         // Funzione per raggruppare gli oggetti con l'ultima colonna uguale
         function groupByLastColumn(csvData) {
             const rows = csvData.split('\n');
@@ -239,11 +216,26 @@ function convertXlsToCsv() {
             const sortedCsv = [header, ...rows].join('\n');
             return sortedCsv;
         }
+
+
+        function getFileExtension(filename) {
+            if (typeof filename === "string") {
+                const lowercasedFilename = filename.toLowerCase();
+                if (lowercasedFilename.endsWith(".xls")) {
+                    return "xls";
+                } else if (lowercasedFilename.endsWith(".xlsx")) {
+                    return "xlsx";
+                }
+            }
+            return "";
+        }
+
+
         function processCSV() {
             // Leggi il file CSV
             const inputElement = document.createElement('input');
             inputElement.type = 'file';
-            inputElement.accept = '.XLS';
+            inputElement.accept = '.xls, .xlsx';
             inputElement.onchange = function (event) {
                 const file = event.target.files[0];
                 const reader = new FileReader();
@@ -264,18 +256,18 @@ function convertXlsToCsv() {
                     const blob = new Blob([sortedCsv], { type: 'text/csv' });
                     // Crea un URL temporaneo per il download del file
                     const url = URL.createObjectURL(blob);
-                   
+
                     // Crea un link per il download e simula il clic
                     const downloadLink = document.createElement('a');
                     downloadLink.href = url;
-                    downloadLink.download = 'output.XLS';
+                    downloadLink.download = 'output.xls';
                     downloadLink.style.display = 'none';
                     document.body.appendChild(downloadLink);
                     downloadLink.click();
                     document.body.removeChild(downloadLink);
                     // Rilascia l'URL temporaneo
                     URL.revokeObjectURL(url);
-                    console.log('File XLS ordinato è stato creato con successo.');
+                    console.log('File CSV ordinato è stato creato con successo.' + getFileExtension());
                 };
                 reader.onerror = function () {
                     console.error('Errore nella lettura del file.');
@@ -286,4 +278,5 @@ function convertXlsToCsv() {
         }
     </script>
 </body>
+
 </html>
