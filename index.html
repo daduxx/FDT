@@ -70,6 +70,10 @@
         <br><br><br>
         <input type="text" id="numCol" placeholder="Inserisci colonna">
         <input type="text" id="sep" placeholder="Inserisci separatore (, / ;)"> <br><br>
+        <select id="format" name="Formato">
+            <option value="XLS">XLS</option>
+            <option value="XLSX">XLSX</option>
+        </select>
         <button onclick="processCSV()">Ordina CSV</button>
         <br><br>
         <button class="scuro" onclick='window.location.href = "./info.html"'>Info</button>
@@ -260,14 +264,23 @@
                     // Crea un link per il download e simula il clic
                     const downloadLink = document.createElement('a');
                     downloadLink.href = url;
-                    downloadLink.download = 'output.xlsx';
+
+                    const formatSelect = document.getElementById('format');
+                    const selectedFormat = formatSelect.value;
+                    if (selectedFormat == 'XLS') {
+                        downloadLink.download = 'output.xls';
+                    } else {
+                        downloadLink.download = 'output.xlsx';
+                    }
+
+
                     downloadLink.style.display = 'none';
                     document.body.appendChild(downloadLink);
                     downloadLink.click();
                     document.body.removeChild(downloadLink);
                     // Rilascia l'URL temporaneo
                     URL.revokeObjectURL(url);
-                    console.log('File CSV ordinato è stato creato con successo.' + getFileExtension());
+                    console.log('File CSV ordinato è stato creato con successo.');
                 };
                 reader.onerror = function () {
                     console.error('Errore nella lettura del file.');
