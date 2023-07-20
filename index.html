@@ -61,9 +61,7 @@
         <br><br><br>
         <input type="text" id="numCol" placeholder="Inserisci colonna">
         <input type="text" id="sep" placeholder="Inserisci separatore (, / ;)">  <br><br>
-        <input type="file" id="xlsFile" accept=".xls" />
-        <button onclick="convertXlsToCsv()">Convert</button>
-        <br><br><br>
+        <br>
         <button onclick="processCSV()">Ordina CSV</button>
         <br><br>
         <button class="scuro" onclick='window.location.href = "./info.html"'>Info</button>
@@ -245,7 +243,7 @@ function convertXlsToCsv() {
             // Leggi il file CSV
             const inputElement = document.createElement('input');
             inputElement.type = 'file';
-            inputElement.accept = '.csv';
+            inputElement.accept = '.XLS';
             inputElement.onchange = function (event) {
                 const file = event.target.files[0];
                 const reader = new FileReader();
@@ -270,7 +268,7 @@ function convertXlsToCsv() {
                     // Crea un link per il download e simula il clic
                     const downloadLink = document.createElement('a');
                     downloadLink.href = url;
-                    downloadLink.download = 'output.csv';
+                    downloadLink.download = 'output.XLS';
                     downloadLink.style.display = 'none';
                     document.body.appendChild(downloadLink);
                     downloadLink.click();
