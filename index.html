@@ -62,7 +62,7 @@
         <input type="text" id="numCol" placeholder="Inserisci colonna">
         <input type="text" id="sep" placeholder="Inserisci separatore (, / ;)">  <br><br>
         <br>
-        <button onclick="processCSV()">Ordina CSV</button>
+        <button onclick="processCSV()">Ordina XLS</button>
         <br><br>
         <button class="scuro" onclick='window.location.href = "./info.html"'>Info</button>
         <button class="scuro" onclick='window.location.href = "./raggruppa.html"'>Formattatore Squadre</button>
@@ -275,7 +275,7 @@ function convertXlsToCsv() {
                     document.body.removeChild(downloadLink);
                     // Rilascia l'URL temporaneo
                     URL.revokeObjectURL(url);
-                    console.log('File CSV ordinato è stato creato con successo.');
+                    console.log('File XLS ordinato è stato creato con successo.');
                 };
                 reader.onerror = function () {
                     console.error('Errore nella lettura del file.');
